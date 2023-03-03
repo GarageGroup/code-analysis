@@ -25,7 +25,13 @@ partial class CodeAnalysisExtensions
             propertySymbol.GetAttributes().Any(IsJsonIgnoreAttribute) is false;
 
         static bool IsJsonIgnoreAttribute(AttributeData attributeData)
-            =>
-            InnerIsType(attributeData?.AttributeClass, "System.Text.Json.Serialization", "JsonIgnoreAttribute") is true;
+        {
+            if (InnerIsType(attributeData?.AttributeClass, "System.Text.Json.Serialization", "JsonIgnoreAttribute") is not true)
+            {
+                return false;
+            }
+
+            return attributeData?.InnerGetAttributePropertyValue("Condition") is null or 1;
+        }
     }
 }

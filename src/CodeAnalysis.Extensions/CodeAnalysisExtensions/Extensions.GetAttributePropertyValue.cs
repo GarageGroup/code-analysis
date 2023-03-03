@@ -17,7 +17,7 @@ partial class CodeAnalysisExtensions
         return InnerGetAttributePropertyValue(attributeData, propertyName);
     }
 
-    private static object? InnerGetAttributePropertyValue(AttributeData attributeData, string propertyName)
+    private static object? InnerGetAttributePropertyValue(this AttributeData attributeData, string propertyName)
     {
         return attributeData.NamedArguments.FirstOrDefault(IsNameMatched).Value.Value;
 
