@@ -18,7 +18,11 @@ partial class CodeAnalysisExtensions
     {
         if (attributeData.ConstructorArguments.Length > constructorOrder)
         {
-            return attributeData.ConstructorArguments[constructorOrder].Value;
+            var value = attributeData.ConstructorArguments[constructorOrder].Value;
+            if (value is not null)
+            {
+                return value;
+            }
         }
 
         if (string.IsNullOrEmpty(propertyName))
