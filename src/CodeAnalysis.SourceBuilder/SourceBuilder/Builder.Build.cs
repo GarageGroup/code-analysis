@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace GGroupp;
+namespace GarageGroup;
 
 partial class SourceBuilder
 {

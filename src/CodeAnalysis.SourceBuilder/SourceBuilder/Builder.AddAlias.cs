@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace GGroupp;
+namespace GarageGroup;
 
 partial class SourceBuilder
 {

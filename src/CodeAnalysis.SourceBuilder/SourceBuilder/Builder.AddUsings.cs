@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GGroupp;
+namespace GarageGroup;
 
 partial class SourceBuilder
 {

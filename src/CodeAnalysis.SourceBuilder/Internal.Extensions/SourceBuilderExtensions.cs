@@ -1,4 +1,4 @@
-namespace GGroupp;
+namespace GarageGroup;
 
 internal static partial class SourceBuilderExtensions
 {

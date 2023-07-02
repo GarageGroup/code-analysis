@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace GGroupp;
+namespace GarageGroup;
 
 partial class SourceBuilderExtensions
 {

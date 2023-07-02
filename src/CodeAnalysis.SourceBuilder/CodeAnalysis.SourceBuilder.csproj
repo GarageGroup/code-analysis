@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <InvariantGlobalization>true</InvariantGlobalization>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <RootNamespace>GGroupp</RootNamespace>
-    <AssemblyName>GGroupp.CodeAnalysis.SourceBuilder</AssemblyName>
+    <RootNamespace>GarageGroup</RootNamespace>
+    <AssemblyName>GarageGroup.CodeAnalysis.SourceBuilder</AssemblyName>
     <Version>0.1.0</Version>
   </PropertyGroup>
 
