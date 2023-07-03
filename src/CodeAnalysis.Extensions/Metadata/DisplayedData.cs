@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GGroupp;
+namespace GarageGroup;
 
 public sealed record class DisplayedTypeData
 {

@@ -1,4 +1,4 @@
-namespace GGroupp;
+namespace GarageGroup;
 
 public static partial class CodeAnalysisExtensions
 {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GGroupp;
+namespace GarageGroup;
 
 public sealed partial class SourceBuilder
 {
@@ -18,7 +18,7 @@ public sealed partial class SourceBuilder
     public SourceBuilder(string? @namespace)
     {
         usings = new();
-        this.@namespace = string.IsNullOrEmpty(@namespace) ? "GGroupp" : @namespace!;
+        this.@namespace = string.IsNullOrEmpty(@namespace) ? "GarageGroup" : @namespace!;
         aliases = new();
         codeBuilder = new();
         tabNumber = 0;

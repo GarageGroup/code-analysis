@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace GGroupp;
+namespace GarageGroup;
 
 partial class CodeAnalysisExtensions
 {
