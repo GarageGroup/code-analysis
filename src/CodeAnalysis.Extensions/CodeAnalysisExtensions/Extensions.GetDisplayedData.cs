@@ -14,13 +14,34 @@ partial class CodeAnalysisExtensions
 
     private static DisplayedTypeData InnerGetDisplayedData(ITypeSymbol typeSymbol)
     {
+        if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
+        {
+            var elementTypeData = InnerGetDisplayedData(arrayTypeSymbol.ElementType);
+
+            var elementTypeNameParts = new List<string>
+            {
+                elementTypeData.DisplayedTypeName
+            };
+
+            elementTypeNameParts.AddRange(Enumerable.Repeat("[]", arrayTypeSymbol.Rank));
+
+            return new DisplayedTypeData(
+                allNamespaces: elementTypeData.AllNamespaces,
+                displayedTypeName: string.Concat(elementTypeNameParts));
+        }
+
         if (typeSymbol is not INamedTypeSymbol namedTypeSymbol || namedTypeSymbol.TypeArguments.Length is not > 0)
         {
+            var typeNamespace = typeSymbol.ContainingNamespace?.ToString();
+            var typeNamespaces = new List<string>(1);
+
+            if (string.IsNullOrEmpty(typeNamespace) is false)
+            {
+                typeNamespaces.Add(typeNamespace ?? string.Empty);
+            }
+
             return new(
-                allNamespaces: new[]
-                {
-                    typeSymbol.ContainingNamespace.ToString()
-                },
+                allNamespaces: typeNamespaces,
                 displayedTypeName: typeSymbol.Name);
         }
 
