@@ -7,16 +7,29 @@ namespace GarageGroup;
 
 partial class CodeAnalysisExtensions
 {
-    public static DisplayedTypeData GetDisplayedData(this ITypeSymbol typeSymbol)
+    public static DisplayedTypeData GetDisplayedData(this ITypeSymbol typeSymbol, bool withNullableSymbol = false)
         =>
         InnerGetDisplayedData(
-            typeSymbol ?? throw new ArgumentNullException(nameof(typeSymbol)));
+            typeSymbol: typeSymbol ?? throw new ArgumentNullException(nameof(typeSymbol)),
+            withNullableSymbol: withNullableSymbol);
 
-    private static DisplayedTypeData InnerGetDisplayedData(ITypeSymbol typeSymbol)
+    private static DisplayedTypeData InnerGetDisplayedData(ITypeSymbol typeSymbol, bool withNullableSymbol)
     {
-        if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
+        var symbol = typeSymbol;
+        var nullableSymbol = string.Empty;
+
+        if (typeSymbol.GetNullableBaseType() is ITypeSymbol baseTypeSymbol)
         {
-            var elementTypeData = InnerGetDisplayedData(arrayTypeSymbol.ElementType);
+            symbol = baseTypeSymbol;
+            if (withNullableSymbol)
+            {
+                nullableSymbol = "?";
+            }
+        }
+
+        if (symbol is IArrayTypeSymbol arrayTypeSymbol)
+        {
+            var elementTypeData = InnerGetChildrenDisplayedData(arrayTypeSymbol.ElementType);
 
             var elementTypeNameParts = new List<string>
             {
@@ -27,12 +40,12 @@ partial class CodeAnalysisExtensions
 
             return new DisplayedTypeData(
                 allNamespaces: elementTypeData.AllNamespaces,
-                displayedTypeName: string.Concat(elementTypeNameParts));
+                displayedTypeName: string.Concat(elementTypeNameParts) + nullableSymbol);
         }
 
-        if (typeSymbol is not INamedTypeSymbol namedTypeSymbol || namedTypeSymbol.TypeArguments.Length is not > 0)
+        if (symbol is not INamedTypeSymbol namedTypeSymbol || namedTypeSymbol.TypeArguments.Length is not > 0)
         {
-            var typeNamespace = typeSymbol.ContainingNamespace?.ToString();
+            var typeNamespace = symbol.ContainingNamespace?.ToString();
             var typeNamespaces = new List<string>(1);
 
             if (string.IsNullOrEmpty(typeNamespace) is false)
@@ -42,17 +55,21 @@ partial class CodeAnalysisExtensions
 
             return new(
                 allNamespaces: typeNamespaces,
-                displayedTypeName: typeSymbol.Name);
+                displayedTypeName: symbol.Name + nullableSymbol);
         }
 
-        var argumentTypes = namedTypeSymbol.TypeArguments.Select(InnerGetDisplayedData);
+        var argumentTypes = namedTypeSymbol.TypeArguments.Select(InnerGetChildrenDisplayedData);
 
         return new(
             allNamespaces: new List<string>(argumentTypes.SelectMany(GetNamespaces))
             {
-                typeSymbol.ContainingNamespace.ToString()
+                symbol.ContainingNamespace.ToString()
             },
-            displayedTypeName: $"{typeSymbol.Name}<{string.Join(",", argumentTypes.Select(GetName))}>");
+            displayedTypeName: $"{symbol.Name}<{string.Join(", ", argumentTypes.Select(GetName))}>{nullableSymbol}");
+
+        static DisplayedTypeData InnerGetChildrenDisplayedData(ITypeSymbol typeSymbol)
+            =>
+            InnerGetDisplayedData(typeSymbol, true);
 
         static IEnumerable<string> GetNamespaces(DisplayedTypeData typeData)
             =>
@@ -61,5 +78,25 @@ partial class CodeAnalysisExtensions
         static string GetName(DisplayedTypeData typeData)
             =>
             typeData.DisplayedTypeName;
+    }
+
+    private static ITypeSymbol? GetNullableBaseType(this ITypeSymbol typeSymbol)
+    {
+        if (typeSymbol is not INamedTypeSymbol namedTypeSymbol)
+        {
+            return null;
+        }
+
+        if (namedTypeSymbol.IsValueType is false)
+        {
+            return namedTypeSymbol.NullableAnnotation is NullableAnnotation.Annotated ? typeSymbol : null;
+        }
+
+        if (namedTypeSymbol.TypeArguments.Length is 1 && namedTypeSymbol.IsSystemType("Nullable"))
+        {
+            return namedTypeSymbol.TypeArguments[0];
+        }
+
+        return null;
     }
 }
