@@ -9,11 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '7.0.x'
+        dotnet-version: '8.0.x'
 
      # Add NuGet Sources
 
@@ -25,7 +27,7 @@ jobs:
 
     - name: Add GarageGroup NuGet Source
       run: >
-        dotnet nuget add source ${{ secrets.GG_NUGET_SOURCE_URL }}
+        dotnet nuget add source ${{ vars.GG_NUGET_SOURCE_URL }}
         -n garage
         -u ${{ secrets.GG_NUGET_SOURCE_USER_NAME }}
         -p ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
@@ -59,6 +61,6 @@ jobs:
       if: ${{ github.ref == 'refs/heads/main' }}
       run: >
         dotnet nuget push "../../../nuget/*.nupkg"
-        -s ${{ secrets.GG_NUGET_SOURCE_URL }}
+        -s ${{ vars.GG_NUGET_SOURCE_URL }}
         -k ${{ secrets.GG_NUGET_SOURCE_USER_PASSWORD }}
         --skip-duplicate
